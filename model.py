@@ -6,6 +6,7 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 
 from keras.models import Sequential
 from keras.activations import relu
+from keras.layers import Activation
 from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU
 from keras.layers.convolutional import Conv2D
 import numpy as np
@@ -20,47 +21,44 @@ learning_rate = 1e-4
 
 
 def get_model():
-    ch, row, col = 3, 80, 320  # Trimmed image format
+    row, col, ch = 66, 200, 3  # Trimmed image format 80 320
 
     model = Sequential()
     # Preprocess incoming data, centered around zero with small standard deviation
     model.add(Lambda(lambda x: x / 127.5 - 1.,
-                     input_shape=(ch, row, col),
-                     output_shape=(ch, row, col)))
+                     input_shape=(row, col, ch),
+                     output_shape=(row, col, ch)))
+
+    # discussion: strided convolutions or max pooling layers
+    # try different activations
 
     # Five convolutional and maxpooling layers
-    model.add(Conv2D(24, 5, 5, border_mode='same', activation='relu', subsample=(2, 2)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-    model.add(Activation(ELU))
+    model.add(Conv2D(24, (5, 5), padding='valid', activation='relu', strides=(2, 2)))  # subsample=(2, 2)
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
 
-    model.add(Conv2D(36, 5, 5, border_mode='same', activation='relu', subsample=(2, 2)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    model.add(Conv2D(36, (5, 5), padding='valid', activation='relu', strides=(2, 2)))  # subsample =(2, 2)
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
 
-    model.add(Conv2D(48, 5, 5, border_mode='same', activation='relu', subsample=(2, 2)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-
-    model.add(Conv2D(64, 3, 3, border_mode='same', activation='relu', subsample=(1, 1)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-
-    model.add(Conv2D(64, 3, 3, border_mode='same', activation='relu', subsample=(1, 1)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-
+    model.add(Conv2D(48, (5, 5), padding='valid', activation='relu', strides=(2, 2)))  # subsample =(2, 2)
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    #
+    model.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
+    #
+    model.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
+    #
     model.add(Flatten())
-
+    #
     # Next, five fully connected layers
-    model.add(Dense(1164))
-    model.add()
+    model.add(Dense(1164, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
 
-    model.add(Dense(100))
-    model.add(activation)
-
-    model.add(Dense(50))
-    model.add(activation)
-
-    model.add(Dense(10))
-    model.add(activation)
-
-    model.add(Dense(1))
+    #
+    model.add(Dense(100, activation='relu'))
+    #
+    model.add(Dense(50, activation='relu'))
+    #
+    model.add(Dense(10, activation='relu'))
+    #
+    model.add(Dense(1, activation='relu'))
 
     model.compile(optimizer="adam", loss="mse")
 
