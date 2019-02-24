@@ -1,7 +1,9 @@
 """
-Neural network for steering angle prediction. Implementation of Nvidia research paper.
+Neural network for steering angle prediction.
+The model is based on NVIDIA's "End to End Learning for Self-Driving Cars" paper.
+Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
 """
-import os
+
 from keras.models import Sequential
 from keras.activations import relu
 from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU
@@ -11,16 +13,13 @@ import data_load
 
 np.random.seed(42)  # for reproducibility
 
+n_epochs = 8
+n_samples_per_epoch = 20032
+n_valid_samples = 6400
+learning_rate = 1e-4
 
-# def gen(hwm, host, port):
-#   for tup in client_generator(hwm=hwm, host=host, port=port):
-#     X, Y, _ = tup
-#     Y = Y[:, -1]
-#     if X.shape[1] == 1:  # no temporal context
-#       X = X[:, -1]
-#     yield X, Y
 
-def get_model(activation=ELU):
+def get_model():
     ch, row, col = 3, 80, 320  # Trimmed image format
 
     model = Sequential()
@@ -28,20 +27,39 @@ def get_model(activation=ELU):
     model.add(Lambda(lambda x: x / 127.5 - 1.,
                      input_shape=(ch, row, col),
                      output_shape=(ch, row, col)))
-    model.add(Conv2D(16, 8, 8, border_mode="same"))
-    model.add(MaxPooling2D((4, 4), padding='same'))
-    model.add(activation())
-    model.add(Conv2D(32, 5, 5, border_mode="same"))
-    model.add(MaxPooling2D((2, 2), padding='same'))
-    model.add(activation())
-    model.add(Conv2D(64, 5, 5, border_mode="same"))
-    model.add(MaxPooling2D((2, 2), padding='same'))
+
+    # Five convolutional and maxpooling layers
+    model.add(Conv2D(24, 5, 5, border_mode='same', activation='relu', subsample=(2, 2)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    model.add(Activation(ELU))
+
+    model.add(Conv2D(36, 5, 5, border_mode='same', activation='relu', subsample=(2, 2)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+
+    model.add(Conv2D(48, 5, 5, border_mode='same', activation='relu', subsample=(2, 2)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+
+    model.add(Conv2D(64, 3, 3, border_mode='same', activation='relu', subsample=(1, 1)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+
+    model.add(Conv2D(64, 3, 3, border_mode='same', activation='relu', subsample=(1, 1)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+
     model.add(Flatten())
-    model.add(Dropout(.2))
-    model.add(activation())
-    model.add(Dense(512))
-    model.add(Dropout(.5))
-    model.add(ELU())
+
+    # Next, five fully connected layers
+    model.add(Dense(1164))
+    model.add()
+
+    model.add(Dense(100))
+    model.add(activation)
+
+    model.add(Dense(50))
+    model.add(activation)
+
+    model.add(Dense(10))
+    model.add(activation)
+
     model.add(Dense(1))
 
     model.compile(optimizer="adam", loss="mse")
@@ -63,15 +81,10 @@ if __name__ == "__main__":
     # does fit_generator also have shuffle, validation_split parameters?
 
     model = get_model()
-    model.fit_generator(train_generator, samples_per_epoch= len(train_samples), validation_data = validation_generator,
-                        nb_val_samples = len(validation_samples), nb_epoch = 3)
+    model.summary()
+    # model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator,
+    #                     nb_val_samples=len(validation_samples), nb_epoch=3)
 
-#     )
-#     print("Saving model weights and configuration file.")
-#
-#     if not os.path.exists("./outputs/steering_model"):
-#         os.makedirs("./outputs/steering_model")
-#
 #     model.save_weights("./outputs/steering_model/steering_angle.keras", True)
 #     with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:
 #         json.dump(model.to_json(), outfile)
