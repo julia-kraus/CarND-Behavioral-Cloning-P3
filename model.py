@@ -82,8 +82,8 @@ if __name__ == "__main__":
     model = get_model()
     model.summary()
     # create two generators for training and validation
-    train_gen = helper.generate_next_batch()
-    validation_gen = helper.generate_next_batch()
+    train_gen = utils.generate_next_batch()
+    validation_gen = utils.generate_next_batch()
 
     history = model.fit_generator(train_gen,
                                   samples_per_epoch=n_samples_per_epoch,

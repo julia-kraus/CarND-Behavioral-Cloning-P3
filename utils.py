@@ -43,31 +43,40 @@ def save_model(model, model_filename='model.json', weights_filename='weights.h5'
 
 
 def get_next_img_file(batch_size=64):
-    """Extracts driving log file to """
+    """Extracts driving log file to image-label pairs in batches"""
     data = pd.read_csv(DRIVING_LOG_FILE)
-    rnd_indices = np.random.randint(0, len(data), batch_size)
+    # pick random images for batch
+    batch_indices = np.random.randint(0, len(data), batch_size)
 
-    image_files_and_angles = []
-    for index in rnd_indices:
-        rnd_image = np.random.randint(0, 3)
-        if rnd_image == 0:
+    images = []
+    angles = []
+    for index in batch_indices:
+        # pick either left, right or center image
+        image_position = np.random.randint(0, 3)
+        if image_position == 0:
             # if image is left image, add the STEERING_PLUS_MINUS coefficient to the steering angle
             img = data.iloc[index]['left'].strip()
             angle = data.iloc[index]['steering'] + STEERING_PLUS_MINUS
-            image_files_and_angles.append((img, angle))
+            images.append(img)
+            angles.append(angle)
 
-        elif rnd_image == 1:
+        elif image_position == 1:
             # if image is central image, leave it as it is
             img = data.iloc[index]['center'].strip()
             angle = data.iloc[index]['steering']
-            image_files_and_angles.append((img, angle))
+            images.append(img)
+            angles.append(angle)
         else:
-            # if image is right image, subrtract the STEERING_PLUS_MINUS coefficient
+            # if image is right image, subtract the STEERING_PLUS_MINUS coefficient
             img = data.iloc[index]['right'].strip()
             angle = data.iloc[index]['steering'] - STEERING_PLUS_MINUS
-            image_files_and_angles.append((img, angle))
+            images.append(img)
+            angles.append(angle)
 
-    return image_files_and_angles
+    X_train = np.array(images)
+    y_train = np.array(angles)
+
+    return X_train, y_train
 
 
 def process_image(image, steering_angle):
@@ -93,7 +102,5 @@ def get_next_batch(batch_size=64):
             new_image, new_angle = process_image(raw_image, raw_angle)
             X_batch.append(new_image)
             y_batch.append(new_angle)
-
-        assert len(X_batch) == batch_size, 'len(X_batch) == batch_size should be True'
 
         yield np.array(X_batch), np.array(y_batch)
