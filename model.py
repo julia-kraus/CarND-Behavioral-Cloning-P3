@@ -10,6 +10,7 @@ from keras.layers import Activation
 from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU
 from keras.layers.convolutional import Conv2D
 import numpy as np
+import utils
 import data_load
 
 np.random.seed(42)  # for reproducibility
@@ -80,9 +81,20 @@ if __name__ == "__main__":
 
     model = get_model()
     model.summary()
-    # model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator,
-    #                     nb_val_samples=len(validation_samples), nb_epoch=3)
+    # create two generators for training and validation
+    train_gen = helper.generate_next_batch()
+    validation_gen = helper.generate_next_batch()
 
-#     model.save_weights("./outputs/steering_model/steering_angle.keras", True)
-#     with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:
-#         json.dump(model.to_json(), outfile)
+    history = model.fit_generator(train_gen,
+                                  samples_per_epoch=n_samples_per_epoch,
+                                  nb_epoch=n_epochs,
+                                  validation_data=validation_gen,
+                                  nb_val_samples=n_valid_samples,
+                                  verbose=1)
+
+    # finally save our model and weights
+    utils.save_model(model)
+    # save weights
+#   model.save_weights("./outputs/steering_model/steering_angle.keras", True)
+#   with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:
+#       json.dump(model.to_json(), outfile)
