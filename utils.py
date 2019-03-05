@@ -2,12 +2,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from scipy.ndimage import rotate
-import cv2
+from PIL import Image
 
 DATA_HOME = './data'
 DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
-STEERING_PLUS_MINUS = 0.229
+STEERING_CORRECTION = 0.229
 
 
 def get_next_img_file(batch_size=64):
@@ -16,24 +15,32 @@ def get_next_img_file(batch_size=64):
     # pick random images for batch
     batch_indices = np.random.randint(0, len(data), batch_size)
 
-    img_files = []
+    X_train = []
+    y_train = []
+
+    images = []
     angles = []
     for index in batch_indices:
-        img_center = data.iloc[index]['center'].strip()
-        img_left = data.iloc[index]['left'].strip()
-        img_right = data.iloc[index]['right'].strip()
+        center_path = data.iloc[index]['center'].strip()
+        left_path = data.iloc[index]['left'].strip()
+        right_path = data.iloc[index]['right'].strip()
 
         steering_center = data.iloc[index]['steering']
-        steering_left = steering_center + STEERING_PLUS_MINUS
-        steering_right = steering_center - STEERING_PLUS_MINUS
+        steering_left = steering_center + STEERING_CORRECTION
+        steering_right = steering_center - STEERING_CORRECTION
 
-        img_files.extend([img_center, img_left, img_right])
+        img_center = process_image(np.asarray(Image.open(os.path.join(DATA_HOME, center_path))), steering_center)
+        img_left = process_image(np.asarray(Image.open(os.path.join(DATA_HOME, left_path))), steering_right)
+        img_right = process_image(np.asarray(Image.open(os.path.join(DATA_HOME, right_path))), steering_right)
+
+        images.extend([img_center, img_left, img_right])
         angles.extend([steering_center, steering_left, steering_right])
 
-    X_train = np.array(images)
-    y_train = np.array(angles)
+    img_files = np.array(images)
+    angles = np.array(angles)
 
     return X_train, y_train
+
 
 # multiple cameras can be done better like that
 # steering_center = float(row[3])
@@ -72,7 +79,7 @@ def get_next_batch(batch_size=64):
         # HERE: TOO MANY_VALUES_TO UNPACK!
         for img_file, angle in zip(images, angles):
             # plt.imread returns image in RGB, opencv in BGR
-            raw_image = plt.imread(os.path.join(DATA_HOME, img_file))
+            raw_image = Image.open(os.path.join(DATA_HOME, img_file))
             raw_angle = angle
             new_image, new_angle = process_image(raw_image, raw_angle)
             X_batch.append(new_image)
@@ -81,7 +88,7 @@ def get_next_batch(batch_size=64):
         yield np.array(X_batch), np.array(y_batch)
 
 
-#
+# horizontal or vertical flip??
 def vertical_flip(image, angle):
     """
     flips images with probability of 0.5

@@ -5,7 +5,7 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 """
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Cropping2D
+from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Cropping2D, Reshape
 from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
@@ -28,7 +28,10 @@ def get_model():
                      input_shape=(row, col, ch),
                      output_shape=(row, col, ch)))
 
+    # something is wrong with the input shape (3, 160, 320 or (
     model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(3, 160, 320)))
+
+    model.add(Reshape((64, 64, 3), input_shape=(160, 320, 3)))
 
     # discussion: strided convolutions or max pooling layers
     # try different activations
