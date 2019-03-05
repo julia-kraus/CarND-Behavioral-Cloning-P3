@@ -9,6 +9,7 @@ from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, Lea
 from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
+
 # maybe use ImageDataGenerator for shearing and cropping
 # adapt neural network to image size
 
@@ -18,12 +19,13 @@ n_epochs = 8
 n_samples_per_epoch = 20032
 n_valid_samples = 6400
 learning_rate = 1e-4
-batch_size=64
+batch_size = 64
 
 
 def get_model():
     # row, col, ch = 66, 200, 3  # Trimmed image format 80 320
-    row, col, ch = 80, 320, 3
+    # row, col, ch = 80, 320, 3
+    row, col, ch = 160, 320, 3
 
     model = Sequential()
     # Normalize incoming data, centered around zero with small standard deviation
@@ -51,8 +53,8 @@ def get_model():
     model.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
     #
     model.add(Flatten())
-    #
-    # # Next, five fully connected layers for uncropped images: 27456
+
+    # Next, five fully connected layers for uncropped images: 27456
     # for cropped images: 6336 neurons, Nvidia: 1164
     model.add(Dense(6336, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
     #
@@ -87,12 +89,12 @@ if __name__ == "__main__":
     train_gen = utils.get_next_batch(batch_size)
     validation_gen = utils.get_next_batch(batch_size)
 
-    history = model.fit_generator(train_gen,
-                                  steps_per_epoch=n_samples_per_epoch//batch_size,
-                                  epochs=n_epochs,
-                                  validation_data=validation_gen,
-                                  validation_steps=n_valid_samples//batch_size,
-                                  verbose=1)
+    model.fit_generator(train_gen,
+                        steps_per_epoch=n_samples_per_epoch // batch_size,
+                        epochs=n_epochs,
+                        validation_data=validation_gen,
+                        validation_steps=n_valid_samples // batch_size,
+                        verbose=1)
 
     # finally save our model and weights
     utils.save_model(model)
