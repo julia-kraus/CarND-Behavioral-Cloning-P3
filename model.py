@@ -22,7 +22,8 @@ batch_size=64
 
 
 def get_model():
-    row, col, ch = 66, 200, 3  # Trimmed image format 80 320
+    # row, col, ch = 66, 200, 3  # Trimmed image format 80 320
+    row, col, ch = 80, 320, 3
 
     model = Sequential()
     # Normalize incoming data, centered around zero with small standard deviation
@@ -49,19 +50,20 @@ def get_model():
     #
     model.add(Flatten())
     #
-    # Next, five fully connected layers
-    model.add(Dense(1164, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
-
+    # # Next, five fully connected layers for uncropped images: 27456
+    # for cropped images: 6336 layers
+    # model.add(Dense(1164, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
     #
-    model.add(Dense(100, activation='relu'))
+    # #
+    # model.add(Dense(100, activation='relu'))
+    # #
+    # model.add(Dense(50, activation='relu'))
+    # #
+    # model.add(Dense(10, activation='relu'))
+    # #
+    # model.add(Dense(1, activation='relu'))
     #
-    model.add(Dense(50, activation='relu'))
-    #
-    model.add(Dense(10, activation='relu'))
-    #
-    model.add(Dense(1, activation='relu'))
-
-    model.compile(optimizer="adam", loss="mse")
+    # model.compile(optimizer="adam", loss="mse")
 
     return model
 
@@ -80,18 +82,18 @@ if __name__ == "__main__":
     model = get_model()
     model.summary()
     # create two generators for training and validation
-    train_gen = utils.get_next_batch(batch_size)
-    validation_gen = utils.get_next_batch(batch_size)
+    # train_gen = utils.get_next_batch(batch_size)
+    # validation_gen = utils.get_next_batch(batch_size)
 
-    history = model.fit_generator(train_gen,
-                                  steps_per_epoch=n_samples_per_epoch//batch_size,
-                                  epochs=n_epochs,
-                                  validation_data=validation_gen,
-                                  validation_steps=n_valid_samples//batch_size,
-                                  verbose=1)
+    # history = model.fit_generator(train_gen,
+    #                               steps_per_epoch=n_samples_per_epoch//batch_size,
+    #                               epochs=n_epochs,
+    #                               validation_data=validation_gen,
+    #                               validation_steps=n_valid_samples//batch_size,
+    #                               verbose=1)
 
     # finally save our model and weights
-    utils.save_model(model)
+    # utils.save_model(model)
     # save weights
 #   model.save_weights("./outputs/steering_model/steering_angle.keras", True)
 #   with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:
