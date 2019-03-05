@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import errno
+from scipy.ndimage import rotate
+from keras.preprocessing.image import ImageDataGenerator
 
 DRIVING_LOG_FILE = './data/driving_log.csv'
 STEERING_PLUS_MINUS = 0.229
@@ -74,10 +76,10 @@ def get_next_img_file(batch_size=64):
             images.append(img)
             angles.append(angle)
 
-    images = np.array(images)
-    angles = np.array(angles)
+    X_train = np.array(images)
+    y_train = np.array(angles)
 
-    return images, angles
+    return X_train, y_train
 
 
 def process_image(image, steering_angle):
@@ -106,3 +108,35 @@ def get_next_batch(batch_size=64):
             y_batch.append(new_angle)
 
         yield np.array(X_batch), np.array(y_batch)
+#
+#
+# def rotate_img(image, steering_angle, rotation_amount=15):
+#     """
+#     rotate the image for image augmentation
+#     """
+#     angle = np.random.uniform(-rotation_amount, rotation_amount + 1)
+#     rad = (np.pi / 180.0) * angle
+#     return rotate(image, angle, reshape=False), steering_angle + (-1) * rad
+#
+#
+# def flip_img(image, steering_angle, flipping_prob=0.5):
+#     """
+#     flips images with probability of 0.5
+#
+#     """
+#     head = bernoulli.rvs(flipping_prob)
+#     if head:
+#         return np.fliplr(image), -1 * steering_angle
+#     else:
+#         return image, steering_angle
+#
+#
+# def crop(img, top_pct, bottom_pct):
+#     """
+#     Crops an image
+#     """
+#
+#     top = int(np.ceil(img.shape[0] * top_pct))
+#     bottom = img.shape[0] - int(np.ceil(img.shape[0] * bottom_pct))
+#
+#     return img[top:bottom, :]
