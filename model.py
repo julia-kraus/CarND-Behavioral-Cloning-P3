@@ -5,12 +5,12 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 """
 
 from keras.models import Sequential
-from keras.activations import relu
-from keras.layers import Activation
 from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU
 from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
+# maybe use ImageDataGenerator for shearing and cropping
+# adapt neural network to image size
 
 np.random.seed(42)  # for reproducibility
 
@@ -80,14 +80,14 @@ if __name__ == "__main__":
     model = get_model()
     model.summary()
     # create two generators for training and validation
-    # train_gen = utils.get_next_batch(batch_size)
-    # validation_gen = utils.get_next_batch(batch_size)m
+    train_gen = utils.get_next_batch(batch_size)
+    validation_gen = utils.get_next_batch(batch_size)
 
     history = model.fit_generator(train_gen,
-                                  steps_per_epoch=n_samples_per_epoch,
+                                  steps_per_epoch=n_samples_per_epoch//batch_size,
                                   epochs=n_epochs,
                                   validation_data=validation_gen,
-                                  validation_steps=n_valid_samples,
+                                  validation_steps=n_valid_samples//batch_size,
                                   verbose=1)
 
     # finally save our model and weights
