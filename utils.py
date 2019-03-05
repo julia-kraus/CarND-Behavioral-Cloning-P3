@@ -20,15 +20,16 @@ def get_next_img_file(batch_size=64):
     angles = []
     for index in batch_indices:
         # pick either left, right or center image
+        # Is this right? When add, when subtract?
         image_position = np.random.randint(0, 3)
-        if image_position == 0:
+        if image_position == 1:
             # if image is left image, add the STEERING_PLUS_MINUS coefficient to the steering angle
             img = data.iloc[index]['left'].strip()
             angle = data.iloc[index]['steering'] + STEERING_PLUS_MINUS
             images.append(img)
             angles.append(angle)
 
-        elif image_position == 1:
+        elif image_position == 0:
             # if image is central image, leave it as it is
             img = data.iloc[index]['center'].strip()
             angle = data.iloc[index]['steering']
@@ -71,7 +72,6 @@ def get_next_batch(batch_size=64):
             new_image, new_angle = process_image(raw_image, raw_angle)
             X_batch.append(new_image)
             y_batch.append(new_angle)
-            print(y_batch)
 
         yield np.array(X_batch), np.array(y_batch)
 
