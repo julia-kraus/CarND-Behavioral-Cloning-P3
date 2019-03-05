@@ -21,30 +21,6 @@ def remove_existing_file(filename):
             raise  # re-raise exception if a different error occurred
 
 
-def save_model(model, model_filename='model.json', weights_filename='model.h5'):
-    """
-    Save the model onto disk
-    :param model:
-        Model to be saved
-    :param model_filename:
-        Name of file where model is stored
-    :param weights_filename:
-        Name of file where weights are stored
-    :return:
-        None
-    """
-
-    # remove existing files of the same name
-    remove_existing_file(model_filename)
-    remove_existing_file(weights_filename)
-
-    json_string = model.to_json()
-    with open(model_filename, 'w') as outfile:
-        json.dump(json_string, outfile)
-
-    model.save_weights(weights_filename)
-
-
 def get_next_img_file(batch_size=64):
     """Extracts driving log file to image-label pairs in batches"""
     data = pd.read_csv(DRIVING_LOG_FILE)
@@ -130,6 +106,3 @@ def vertical_flip(image, angle):
         return np.fliplr(image), -1 * angle
     else:
         return image, angle
-
-
-

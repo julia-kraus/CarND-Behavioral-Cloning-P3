@@ -97,7 +97,7 @@ if __name__ == "__main__":
                         verbose=1)
 
     # finally save our model and weights
-    utils.save_model(model)
+    model.save('model.h5')
     # save weights
 #   model.save_weights("./outputs/steering_model/steering_angle.keras", True)
 #   with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:
