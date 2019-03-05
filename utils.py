@@ -16,37 +16,42 @@ def get_next_img_file(batch_size=64):
     # pick random images for batch
     batch_indices = np.random.randint(0, len(data), batch_size)
 
-    images = []
+    img_files = []
     angles = []
     for index in batch_indices:
-        # pick either left, right or center image
-        # Is this right? When add, when subtract?
-        image_position = np.random.randint(0, 3)
-        if image_position == 1:
-            # if image is left image, add the STEERING_PLUS_MINUS coefficient to the steering angle
-            img = data.iloc[index]['left'].strip()
-            angle = data.iloc[index]['steering'] + STEERING_PLUS_MINUS
-            images.append(img)
-            angles.append(angle)
+        img_center = data.iloc[index]['center'].strip()
+        img_left = data.iloc[index]['left'].strip()
+        img_right = data.iloc[index]['right'].strip()
 
-        elif image_position == 0:
-            # if image is central image, leave it as it is
-            img = data.iloc[index]['center'].strip()
-            angle = data.iloc[index]['steering']
-            images.append(img)
-            angles.append(angle)
-        else:
-            # if image is right image, subtract the STEERING_PLUS_MINUS coefficient
-            img = data.iloc[index]['right'].strip()
-            angle = data.iloc[index]['steering'] - STEERING_PLUS_MINUS
-            images.append(img)
-            angles.append(angle)
+        steering_center = data.iloc[index]['steering']
+        steering_left = steering_center + STEERING_PLUS_MINUS
+        steering_right = steering_center - STEERING_PLUS_MINUS
+
+        img_files.extend([img_center, img_left, img_right])
+        angles.extend([steering_center, steering_left, steering_right])
 
     X_train = np.array(images)
     y_train = np.array(angles)
 
     return X_train, y_train
 
+# multiple cameras can be done better like that
+# steering_center = float(row[3])
+#
+#             # create adjusted steering measurements for the side camera images
+#             correction = 0.2 # this is a parameter to tune
+#             steering_left = steering_center + correction
+#             steering_right = steering_center - correction
+#
+#             # read in images from center, left and right cameras
+#             path = "..." # fill in the path to your training IMG directory
+#             img_center = process_image(np.asarray(Image.open(path + row[0])))
+#             img_left = process_image(np.asarray(Image.open(path + row[1])))
+#             img_right = process_image(np.asarray(Image.open(path + row[2])))
+#
+#             # add images and angles to data set
+#             car_images.extend(img_center, img_left, img_right)
+#             steering_angles.extend(steering_center, steering_left, steering_right)
 
 def process_image(image, steering_angle):
     return image, steering_angle
@@ -76,15 +81,6 @@ def get_next_batch(batch_size=64):
         yield np.array(X_batch), np.array(y_batch)
 
 
-def rotate_img(image, steer_angle, max_rotation=15):
-    """
-    rotate the image for image augmentation
-    """
-    rot_angle = np.random.uniform(-max_rotation, max_rotation + 1)
-    rot_rad = (np.pi / 180.0) * rot_angle
-    return rotate(image, rot_angle, reshape=False), steer_angle + (-1) * rot_rad
-
-
 #
 def vertical_flip(image, angle):
     """
@@ -96,3 +92,21 @@ def vertical_flip(image, angle):
         return np.fliplr(image), -1 * angle
     else:
         return image, angle
+
+# multiple cameras can be done better like that
+# steering_center = float(row[3])
+#
+#             # create adjusted steering measurements for the side camera images
+#             correction = 0.2 # this is a parameter to tune
+#             steering_left = steering_center + correction
+#             steering_right = steering_center - correction
+#
+#             # read in images from center, left and right cameras
+#             path = "..." # fill in the path to your training IMG directory
+#             img_center = process_image(np.asarray(Image.open(path + row[0])))
+#             img_left = process_image(np.asarray(Image.open(path + row[1])))
+#             img_right = process_image(np.asarray(Image.open(path + row[2])))
+#
+#             # add images and angles to data set
+#             car_images.extend(img_center, img_left, img_right)
+#             steering_angles.extend(steering_center, steering_left, steering_right)
