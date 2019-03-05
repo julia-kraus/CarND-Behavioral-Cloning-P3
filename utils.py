@@ -74,10 +74,10 @@ def get_next_img_file(batch_size=64):
             images.append(img)
             angles.append(angle)
 
-    X_train = np.array(images)
-    y_train = np.array(angles)
+    images = np.array(images)
+    angles = np.array(angles)
 
-    return X_train, y_train
+    return images, angles
 
 
 def process_image(image, steering_angle):
@@ -95,8 +95,9 @@ def get_next_batch(batch_size=64):
     while True:
         X_batch = []
         y_batch = []
-        images = get_next_img_file(batch_size)
-        for img_file, angle in images:
+        images, angles = get_next_img_file(batch_size)
+        # HERE: TOO MANY_VALUES_TO UNPACK!
+        for img_file, angle in zip(images, angles):
             # plt.imread returns image in RGB, opencv in BGR
             raw_image = plt.imread(IMG_FOLDER + img_file)
             raw_angle = angle

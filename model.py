@@ -80,14 +80,14 @@ if __name__ == "__main__":
     model = get_model()
     model.summary()
     # create two generators for training and validation
-    train_gen = utils.get_next_img_file(batch_size)
+    train_gen = utils.get_next_batch(batch_size)
     validation_gen = utils.get_next_batch(batch_size)
 
     history = model.fit_generator(train_gen,
-                                  samples_per_epoch=n_samples_per_epoch,
-                                  nb_epoch=n_epochs,
+                                  steps_per_epoch=n_samples_per_epoch,
+                                  epochs=n_epochs,
                                   validation_data=validation_gen,
-                                  nb_val_samples=n_valid_samples,
+                                  validation_steps=n_valid_samples,
                                   verbose=1)
 
     # finally save our model and weights
