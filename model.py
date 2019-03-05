@@ -20,30 +20,24 @@ batch_size = 64
 
 
 def get_model():
-    row, col, ch = 160, 320, 3
-
+    row, col, ch = 128, 128, 3
     model = Sequential()
     # Normalize incoming data, centered around zero with small standard deviation
     model.add(Lambda(lambda x: x / 127.5 - 1.,
                      input_shape=(row, col, ch),
                      output_shape=(row, col, ch)))
 
-    # something is wrong with the input shape (3, 160, 320 or (
-    model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(3, 160, 320)))
-
-    model.add(Reshape((64, 64, 3), input_shape=(160, 320, 3)))
-
     # discussion: strided convolutions or max pooling layers
     # try different activations
 
     # Five convolutional and maxpooling layers
-    model.add(Conv2D(24, (5, 5), padding='valid', activation='relu', strides=(2, 2)))  # subsample=(2, 2)
+    model.add(Conv2D(24, (5, 5), padding='valid', activation='relu', strides=(2, 2)))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
 
-    model.add(Conv2D(36, (5, 5), padding='valid', activation='relu', strides=(2, 2)))  # subsample =(2, 2)
+    model.add(Conv2D(36, (5, 5), padding='valid', activation='relu', strides=(2, 2)))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
 
-    model.add(Conv2D(48, (5, 5), padding='valid', activation='relu', strides=(2, 2)))  # subsample =(2, 2)
+    model.add(Conv2D(48, (5, 5), padding='valid', activation='relu', strides=(2, 2)))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
     #
     model.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
@@ -54,7 +48,7 @@ def get_model():
 
     # Next, five fully connected layers for uncropped images: 27456
     # for cropped images: 6336 neurons, Nvidia: 1164
-    model.add(Dense(6336, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
+    model.add(Dense(5184, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
     #
     model.add(Dense(100, activation='relu'))
     #
@@ -70,21 +64,19 @@ def get_model():
 
 
 if __name__ == "__main__":
-
     model = get_model()
     model.summary()
 
-    # create two generators for training and validation
-    train_gen = utils.get_next_batch(batch_size)
-    validation_gen = utils.get_next_batch(batch_size)
-
-    model.fit_generator(train_gen,
-                        steps_per_epoch=n_samples_per_epoch // batch_size,
-                        epochs=n_epochs,
-                        validation_data=validation_gen,
-                        validation_steps=n_valid_samples // batch_size,
-                        verbose=1)
-
-    # save model
-    model.save('model.h5')
-
+    # # create two generators for training and validation
+    # train_gen = utils.get_next_batch(batch_size)
+    # validation_gen = utils.get_next_batch(batch_size)
+    #
+    # model.fit_generator(train_gen,
+    #                     steps_per_epoch=n_samples_per_epoch // batch_size,
+    #                     epochs=n_epochs,
+    #                     validation_data=validation_gen,
+    #                     validation_steps=n_valid_samples // batch_size,
+    #                     verbose=1)
+    #
+    # # save model
+    # model.save('model.h5')

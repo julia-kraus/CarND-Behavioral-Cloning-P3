@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 from PIL import Image
 
@@ -9,14 +8,10 @@ DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
 STEERING_CORRECTION = 0.229
 
 
-def get_next_img_file(batch_size=64):
+def get_images_angles(batch_size=64):
     """Extracts driving log file to image-label pairs in batches"""
     data = pd.read_csv(DRIVING_LOG_FILE)
-    # pick random images for batch
     batch_indices = np.random.randint(0, len(data), batch_size)
-
-    X_train = []
-    y_train = []
 
     images = []
     angles = []
@@ -36,32 +31,17 @@ def get_next_img_file(batch_size=64):
         images.extend([img_center, img_left, img_right])
         angles.extend([steering_center, steering_left, steering_right])
 
-    img_files = np.array(images)
-    angles = np.array(angles)
+    X_train = np.array(images)
+    y_train = np.array(angles)
 
     return X_train, y_train
 
 
-# multiple cameras can be done better like that
-# steering_center = float(row[3])
-#
-#             # create adjusted steering measurements for the side camera images
-#             correction = 0.2 # this is a parameter to tune
-#             steering_left = steering_center + correction
-#             steering_right = steering_center - correction
-#
-#             # read in images from center, left and right cameras
-#             path = "..." # fill in the path to your training IMG directory
-#             img_center = process_image(np.asarray(Image.open(path + row[0])))
-#             img_left = process_image(np.asarray(Image.open(path + row[1])))
-#             img_right = process_image(np.asarray(Image.open(path + row[2])))
-#
-#             # add images and angles to data set
-#             car_images.extend(img_center, img_left, img_right)
-#             steering_angles.extend(steering_center, steering_left, steering_right)
-
-def process_image(image, steering_angle):
-    return image, steering_angle
+def process_image(img, angle):
+    img = crop(img)
+    # img = resize(img, (128, 128))
+    img, angle = horizontal_flip(img, angle)
+    return img, angle
 
 
 def get_next_batch(batch_size=64):
@@ -73,23 +53,13 @@ def get_next_batch(batch_size=64):
 
     """
     while True:
-        X_batch = []
-        y_batch = []
-        images, angles = get_next_img_file(batch_size)
-        # HERE: TOO MANY_VALUES_TO UNPACK!
-        for img_file, angle in zip(images, angles):
-            # plt.imread returns image in RGB, opencv in BGR
-            raw_image = Image.open(os.path.join(DATA_HOME, img_file))
-            raw_angle = angle
-            new_image, new_angle = process_image(raw_image, raw_angle)
-            X_batch.append(new_image)
-            y_batch.append(new_angle)
+        images, angles = get_images_angles(batch_size)
 
-        yield np.array(X_batch), np.array(y_batch)
+        yield images, angles
 
 
 # horizontal or vertical flip??
-def vertical_flip(image, angle):
+def horizontal_flip(image, angle):
     """
     flips images with probability of 0.5
 
@@ -99,6 +69,35 @@ def vertical_flip(image, angle):
         return np.fliplr(image), -1 * angle
     else:
         return image, angle
+
+
+def resize(image, new_dim):
+    """
+    Resize a given image according the the new dimension
+    :param image:
+        Source image array
+    :param new_dim:
+        new dimensions
+    :return:
+        Resize image
+    """
+
+    return np.array(Image.fromarray(image).resize(new_dim))
+
+
+def crop(image, top_crop=60, bottom_crop=20):
+    """
+    Crops an image according to the given parameters
+    :param image: source image
+    :param top_percent:
+        The percentage of the original image will be cropped from the top of the image
+    :param bottom_percent:
+        The percentage of the original image will be cropped from the bottom of the image
+    :return:
+        The cropped image
+    """
+
+    return image[top_crop:-bottom_crop, :]
 
 # multiple cameras can be done better like that
 # steering_center = float(row[3])

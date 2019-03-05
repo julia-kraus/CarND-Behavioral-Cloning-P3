@@ -119,7 +119,7 @@ if __name__ == '__main__':
         print('You are using Keras version ', keras_version,
               ', but the model was built using ', model_version)
 
-    model = load_model(args.model)
+    model = load_model(args.model, compile=True)
 
     if args.image_folder != '':
         print("Creating image folder at {}".format(args.image_folder))
