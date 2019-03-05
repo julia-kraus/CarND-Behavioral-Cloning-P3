@@ -5,7 +5,7 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 """
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU
+from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Cropping2D
 from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
@@ -31,6 +31,8 @@ def get_model():
                      input_shape=(row, col, ch),
                      output_shape=(row, col, ch)))
 
+    model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(3, 160, 320)))
+
     # discussion: strided convolutions or max pooling layers
     # try different activations
 
@@ -51,19 +53,18 @@ def get_model():
     model.add(Flatten())
     #
     # # Next, five fully connected layers for uncropped images: 27456
-    # for cropped images: 6336 layers
-    # model.add(Dense(1164, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
+    # for cropped images: 6336 neurons, Nvidia: 1164
+    model.add(Dense(6336, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
     #
-    # #
-    # model.add(Dense(100, activation='relu'))
-    # #
-    # model.add(Dense(50, activation='relu'))
-    # #
-    # model.add(Dense(10, activation='relu'))
-    # #
-    # model.add(Dense(1, activation='relu'))
+    model.add(Dense(100, activation='relu'))
     #
-    # model.compile(optimizer="adam", loss="mse")
+    model.add(Dense(50, activation='relu'))
+    #
+    model.add(Dense(10, activation='relu'))
+    #
+    model.add(Dense(1, activation='relu'))
+
+    model.compile(optimizer="adam", loss="mse")
 
     return model
 
@@ -81,19 +82,20 @@ if __name__ == "__main__":
 
     model = get_model()
     model.summary()
-    # create two generators for training and validation
-    # train_gen = utils.get_next_batch(batch_size)
-    # validation_gen = utils.get_next_batch(batch_size)
 
-    # history = model.fit_generator(train_gen,
-    #                               steps_per_epoch=n_samples_per_epoch//batch_size,
-    #                               epochs=n_epochs,
-    #                               validation_data=validation_gen,
-    #                               validation_steps=n_valid_samples//batch_size,
-    #                               verbose=1)
+    # create two generators for training and validation
+    train_gen = utils.get_next_batch(batch_size)
+    validation_gen = utils.get_next_batch(batch_size)
+
+    history = model.fit_generator(train_gen,
+                                  steps_per_epoch=n_samples_per_epoch//batch_size,
+                                  epochs=n_epochs,
+                                  validation_data=validation_gen,
+                                  validation_steps=n_valid_samples//batch_size,
+                                  verbose=1)
 
     # finally save our model and weights
-    # utils.save_model(model)
+    utils.save_model(model)
     # save weights
 #   model.save_weights("./outputs/steering_model/steering_angle.keras", True)
 #   with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:

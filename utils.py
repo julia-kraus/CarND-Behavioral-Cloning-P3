@@ -155,14 +155,4 @@ def random_shear(image, steering_angle, shear_range=200):
     steering_angle += dsteering
 
     return image, steering_angle
-#
-#
-# def crop(img, top_pct, bottom_pct):
-#     """
-#     Crops an image
-#     """
-#
-#     top = int(np.ceil(img.shape[0] * top_pct))
-#     bottom = img.shape[0] - int(np.ceil(img.shape[0] * bottom_pct))
-#
-#     return img[top:bottom, :]
+
