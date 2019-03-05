@@ -10,9 +10,6 @@ from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
 
-# maybe use ImageDataGenerator for shearing and cropping
-# adapt neural network to image size
-
 np.random.seed(42)  # for reproducibility
 
 n_epochs = 8
@@ -23,8 +20,6 @@ batch_size = 64
 
 
 def get_model():
-    # row, col, ch = 66, 200, 3  # Trimmed image format 80 320
-    # row, col, ch = 80, 320, 3
     row, col, ch = 160, 320, 3
 
     model = Sequential()
@@ -72,15 +67,6 @@ def get_model():
 
 
 if __name__ == "__main__":
-    #     parser = argparse.ArgumentParser(description='Training neural network for steering angle prediction')
-    #     parser.add_argument('--batch', type=int, default=64, help='Batch size.')
-    #     parser.add_argument('--epoch', type=int, default=200, help='Number of epochs.')
-    #     parser.add_argument('--epochsize', type=int, default=10000, help='How many frames per epoch.')
-    #     parser.set_defaults(loadweights=False)
-    #     args = parser.parse_args()
-    #
-
-    # does fit_generator also have shuffle, validation_split parameters?
 
     model = get_model()
     model.summary()
@@ -96,9 +82,6 @@ if __name__ == "__main__":
                         validation_steps=n_valid_samples // batch_size,
                         verbose=1)
 
-    # finally save our model and weights
+    # save model
     model.save('model.h5')
-    # save weights
-#   model.save_weights("./outputs/steering_model/steering_angle.keras", True)
-#   with open('./outputs/steering_model/steering_angle.json', 'w') as outfile:
-#       json.dump(model.to_json(), outfile)
+

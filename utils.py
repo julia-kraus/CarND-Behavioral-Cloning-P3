@@ -1,24 +1,13 @@
-import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import errno
 from scipy.ndimage import rotate
 import cv2
 
-DRIVING_LOG_FILE = './data/driving_log.csv'
+DATA_HOME = './data'
+DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
 STEERING_PLUS_MINUS = 0.229
-IMG_FOLDER = './data/'
-
-
-def remove_existing_file(filename):
-    """removes existing files of the name filename"""
-    try:
-        os.remove(filename)
-    except OSError as e:  # this would be "except OSError, e:" before Python 2.6
-        if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
-            raise  # re-raise exception if a different error occurred
 
 
 def get_next_img_file(batch_size=64):
@@ -77,11 +66,12 @@ def get_next_batch(batch_size=64):
         # HERE: TOO MANY_VALUES_TO UNPACK!
         for img_file, angle in zip(images, angles):
             # plt.imread returns image in RGB, opencv in BGR
-            raw_image = plt.imread(IMG_FOLDER + img_file)
+            raw_image = plt.imread(os.path.join(DATA_HOME, img_file))
             raw_angle = angle
             new_image, new_angle = process_image(raw_image, raw_angle)
             X_batch.append(new_image)
             y_batch.append(new_angle)
+            print(y_batch)
 
         yield np.array(X_batch), np.array(y_batch)
 
