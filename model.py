@@ -11,7 +11,6 @@ from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, Lea
 from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
-import data_load
 
 np.random.seed(42)  # for reproducibility
 
@@ -19,13 +18,14 @@ n_epochs = 8
 n_samples_per_epoch = 20032
 n_valid_samples = 6400
 learning_rate = 1e-4
+batch_size=64
 
 
 def get_model():
     row, col, ch = 66, 200, 3  # Trimmed image format 80 320
 
     model = Sequential()
-    # Preprocess incoming data, centered around zero with small standard deviation
+    # Normalize incoming data, centered around zero with small standard deviation
     model.add(Lambda(lambda x: x / 127.5 - 1.,
                      input_shape=(row, col, ch),
                      output_shape=(row, col, ch)))
@@ -71,8 +71,6 @@ if __name__ == "__main__":
     #     parser.add_argument('--batch', type=int, default=64, help='Batch size.')
     #     parser.add_argument('--epoch', type=int, default=200, help='Number of epochs.')
     #     parser.add_argument('--epochsize', type=int, default=10000, help='How many frames per epoch.')
-    #     parser.add_argument('--skipvalidate', dest='skipvalidate', action='store_true', help='Multiple path output.')
-    #     parser.set_defaults(skipvalidate=False)
     #     parser.set_defaults(loadweights=False)
     #     args = parser.parse_args()
     #
@@ -82,8 +80,8 @@ if __name__ == "__main__":
     model = get_model()
     model.summary()
     # create two generators for training and validation
-    train_gen = utils.generate_next_batch()
-    validation_gen = utils.generate_next_batch()
+    train_gen = utils.get_next_img_file(batch_size)
+    validation_gen = utils.get_next_batch(batch_size)
 
     history = model.fit_generator(train_gen,
                                   samples_per_epoch=n_samples_per_epoch,

@@ -7,6 +7,7 @@ import errno
 
 DRIVING_LOG_FILE = './data/driving_log.csv'
 STEERING_PLUS_MINUS = 0.229
+IMG_FOLDER = './data/'
 
 
 def remove_existing_file(filename):
@@ -97,7 +98,7 @@ def get_next_batch(batch_size=64):
         images = get_next_img_file(batch_size)
         for img_file, angle in images:
             # plt.imread returns image in RGB, opencv in BGR
-            raw_image = plt.imread(IMG_PATH + img_file)
+            raw_image = plt.imread(IMG_FOLDER + img_file)
             raw_angle = angle
             new_image, new_angle = process_image(raw_image, raw_angle)
             X_batch.append(new_image)
