@@ -1,7 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="julia">
     <words>
+      <w>eventlet</w>
       <w>imgs</w>
+      <w>keras</w>
       <w>preprocess</w>
       <w>relu</w>
     </words>
