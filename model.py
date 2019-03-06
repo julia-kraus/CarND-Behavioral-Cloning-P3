@@ -5,7 +5,7 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 """
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Cropping2D, Reshape
+from keras.layers import Dense, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Dropout
 from keras.layers.convolutional import Conv2D
 import numpy as np
 import utils
@@ -68,15 +68,21 @@ if __name__ == "__main__":
     model.summary()
 
     # # create two generators for training and validation
-    train_gen = utils.get_next_batch(batch_size)
-    validation_gen = utils.get_next_batch(batch_size)
+    train_gen = utils.get_next_batch()
+    validation_gen = utils.get_next_batch()
     #
-    model.fit_generator(train_gen,
-                        steps_per_epoch=n_samples_per_epoch // batch_size,
-                        epochs=n_epochs,
-                        validation_data=validation_gen,
-                        validation_steps=n_valid_samples // batch_size,
-                        verbose=1)
+    # model.fit_generator(train_gen,
+    #                     steps_per_epoch=n_samples_per_epoch // batch_size,
+    #                     epochs=n_epochs,
+    #                     validation_data=validation_gen,
+    #                     validation_steps=n_valid_samples // batch_size,
+    #                     verbose=1)
     #
+    history = model.fit_generator(train_gen,
+                                  samples_per_epoch=n_samples_per_epoch,
+                                  nb_epoch=n_epochs,
+                                  validation_data=validation_gen,
+                                  nb_val_samples=n_valid_samples,
+                                  verbose=1)
     # # save model
     model.save('model.h5')

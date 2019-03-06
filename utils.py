@@ -3,7 +3,6 @@ import pandas as pd
 import os
 from PIL import Image
 np.random.seed(0)
-import matplotlib.pyplot as plt
 
 DATA_HOME = './data_mine'
 DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
