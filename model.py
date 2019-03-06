@@ -20,7 +20,7 @@ batch_size = 64
 
 
 def get_model():
-    row, col, ch = 128, 128, 3
+    row, col, ch = 64, 64, 3
     model = Sequential()
     # Normalize incoming data, centered around zero with small standard deviation
     model.add(Lambda(lambda x: x / 127.5 - 1.,
@@ -68,15 +68,15 @@ if __name__ == "__main__":
     model.summary()
 
     # # create two generators for training and validation
-    # train_gen = utils.get_next_batch(batch_size)
-    # validation_gen = utils.get_next_batch(batch_size)
+    train_gen = utils.get_next_batch(batch_size)
+    validation_gen = utils.get_next_batch(batch_size)
     #
-    # model.fit_generator(train_gen,
-    #                     steps_per_epoch=n_samples_per_epoch // batch_size,
-    #                     epochs=n_epochs,
-    #                     validation_data=validation_gen,
-    #                     validation_steps=n_valid_samples // batch_size,
-    #                     verbose=1)
+    model.fit_generator(train_gen,
+                        steps_per_epoch=n_samples_per_epoch // batch_size,
+                        epochs=n_epochs,
+                        validation_data=validation_gen,
+                        validation_steps=n_valid_samples // batch_size,
+                        verbose=1)
     #
     # # save model
-    # model.save('model.h5')
+    model.save('model.h5')
