@@ -7,6 +7,7 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Dropout
 from keras.layers.convolutional import Conv2D
+from keras.optimizers import Adam
 import numpy as np
 import utils
 
@@ -31,24 +32,24 @@ def get_model():
     # try different activations
 
     # Five convolutional and maxpooling layers
-    model.add(Conv2D(24, (5, 5), padding='valid', activation='relu', strides=(2, 2)))
+    model.add(Conv2D(24, (5, 5), padding='same', activation='relu', strides=(2, 2)))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
 
-    model.add(Conv2D(36, (5, 5), padding='valid', activation='relu', strides=(2, 2)))
+    model.add(Conv2D(36, (5, 5), padding='same', activation='relu', strides=(2, 2)))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
 
-    model.add(Conv2D(48, (5, 5), padding='valid', activation='relu', strides=(2, 2)))
+    model.add(Conv2D(48, (5, 5), padding='same', activation='relu', strides=(2, 2)))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
     #
-    model.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu', strides=(2, 2)))
     #
-    model.add(Conv2D(64, (3, 3), padding='valid', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
     #
     model.add(Flatten())
-
+    #
     # Next, five fully connected layers for uncropped images: 27456
     # for cropped images: 6336 neurons, Nvidia: 1164
-    model.add(Dense(5184, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
+    model.add(Dense(1024, activation='relu'))  # adapt this if you have a different input size. the rest should be fine
     #
     model.add(Dense(100, activation='relu'))
     #
@@ -58,7 +59,7 @@ def get_model():
     #
     model.add(Dense(1, activation='relu'))
 
-    model.compile(optimizer="adam", loss="mse")
+    model.compile(optimizer=Adam(learning_rate), loss="mse")
 
     return model
 
@@ -84,5 +85,5 @@ if __name__ == "__main__":
                                   validation_data=validation_gen,
                                   nb_val_samples=n_valid_samples,
                                   verbose=1)
-    # # save model
+    # save model
     model.save('model.h5')
