@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from PIL import Image
 np.random.seed(0)
+import matplotlib.pyplot as plt
 
 DATA_HOME = './data_mine'
 DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
@@ -25,8 +26,6 @@ def get_images_angles(batch_size=64):
         steering_center = data.iloc[index]['steering']
         steering_left = steering_center + STEERING_CORRECTION
         steering_right = steering_center - STEERING_CORRECTION
-        print('steering right before ', steering_right)
-        #############ALLES OK BIS HIER###################################
 
         img_center, steering_center = process_image(np.asarray(Image.open(os.path.join(DATA_HOME, center_path))),
                                                     steering_center)
@@ -34,7 +33,6 @@ def get_images_angles(batch_size=64):
                                                 steering_left)
         img_right, steering_right = process_image(np.asarray(Image.open(os.path.join(DATA_HOME, right_path))),
                                                   steering_right)
-        print('steering_right after ', steering_right)
 
         images.extend([img_center, img_left, img_right])
         angles.extend([steering_center, steering_left, steering_right])
