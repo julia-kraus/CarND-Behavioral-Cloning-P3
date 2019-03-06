@@ -4,7 +4,7 @@ import os
 from PIL import Image
 np.random.seed(0)
 
-DATA_HOME = './data_mine'
+DATA_HOME = './data'
 DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
 STEERING_CORRECTION = 0.229
 

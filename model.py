@@ -13,7 +13,7 @@ import utils
 
 np.random.seed(42)  # for reproducibility
 
-n_epochs = 8
+n_epochs = 10
 n_samples_per_epoch = 20032
 n_valid_samples = 6400
 learning_rate = 1e-4
@@ -57,7 +57,7 @@ def get_model():
     #
     model.add(Dense(10, activation='relu'))
     #
-    model.add(Dense(1, activation='relu'))
+    model.add(Dense(1))
 
     model.compile(optimizer=Adam(learning_rate), loss="mse")
 
@@ -72,18 +72,18 @@ if __name__ == "__main__":
     train_gen = utils.get_next_batch()
     validation_gen = utils.get_next_batch()
     #
-    # model.fit_generator(train_gen,
-    #                     steps_per_epoch=n_samples_per_epoch // batch_size,
-    #                     epochs=n_epochs,
-    #                     validation_data=validation_gen,
-    #                     validation_steps=n_valid_samples // batch_size,
-    #                     verbose=1)
-    #
-    history = model.fit_generator(train_gen,
-                                  samples_per_epoch=n_samples_per_epoch,
-                                  nb_epoch=n_epochs,
-                                  validation_data=validation_gen,
-                                  nb_val_samples=n_valid_samples,
-                                  verbose=1)
+    model.fit_generator(train_gen,
+                        steps_per_epoch=n_samples_per_epoch // batch_size,
+                        epochs=n_epochs,
+                        validation_data=validation_gen,
+                        validation_steps=n_valid_samples // batch_size,
+                        verbose=1)
+    
+#     history = model.fit_generator(train_gen,
+#                                   samples_per_epoch=n_samples_per_epoch,
+#                                   nb_epoch=n_epochs,
+#                                   validation_data=validation_gen,
+#                                   nb_val_samples=n_valid_samples,
+#                                   verbose=1)
     # save model
     model.save('model.h5')
