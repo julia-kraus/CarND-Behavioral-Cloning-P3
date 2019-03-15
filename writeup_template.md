@@ -11,7 +11,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
+[image1]: ./examples/model_architecture.png "Model Visualization"
 [image2]: ./examples/placeholder_small.png "Normal Image"
 [image3]: ./examples/placeholder_small.png "Flipped Image"
 
