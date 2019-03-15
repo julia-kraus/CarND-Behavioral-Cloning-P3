@@ -5,15 +5,16 @@ Source:  https://images.nvidia.com/content/tegra/automotive/images/2016/solution
 """
 
 from keras.models import Sequential
-from keras.layers import Dense, Flatten, Lambda, ELU, MaxPooling2D, LeakyReLU, PReLU, Dropout
+from keras.layers import Dense, Flatten, Lambda
 from keras.layers.convolutional import Conv2D
 from keras.optimizers import Adam
 import numpy as np
+from keras.utils.vis_utils import plot_model
 import utils
 
 np.random.seed(42)  # for reproducibility
 
-n_epochs = 10
+n_epochs = 12
 n_samples_per_epoch = 20032
 n_valid_samples = 6400
 learning_rate = 1e-4
@@ -69,21 +70,15 @@ if __name__ == "__main__":
     model.summary()
 
     # # create two generators for training and validation
-    train_gen = utils.get_next_batch()
-    validation_gen = utils.get_next_batch()
-    #
-    model.fit_generator(train_gen,
-                        steps_per_epoch=n_samples_per_epoch // batch_size,
-                        epochs=n_epochs,
-                        validation_data=validation_gen,
-                        validation_steps=n_valid_samples // batch_size,
-                        verbose=1)
-    
-#     history = model.fit_generator(train_gen,
-#                                   samples_per_epoch=n_samples_per_epoch,
-#                                   nb_epoch=n_epochs,
-#                                   validation_data=validation_gen,
-#                                   nb_val_samples=n_valid_samples,
-#                                   verbose=1)
+    # train_gen = utils.get_next_batch()
+    # validation_gen = utils.get_next_batch()
+    # #
+    # model.fit_generator(train_gen,
+    #                     steps_per_epoch=n_samples_per_epoch // batch_size,
+    #                     epochs=n_epochs,
+    #                     validation_data=validation_gen,
+    #                     validation_steps=n_valid_samples // batch_size,
+    #                     verbose=1)
+
     # save model
     model.save('model.h5')

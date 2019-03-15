@@ -1,11 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="julia">
     <words>
+      <w>convolutional</w>
       <w>eventlet</w>
       <w>imgs</w>
       <w>keras</w>
+      <w>maxpooling</w>
+      <w>nvidia</w>
       <w>preprocess</w>
       <w>relu</w>
+      <w>strided</w>
     </words>
   </dictionary>
 </component>
