@@ -62,6 +62,8 @@ def get_model():
 
     model.compile(optimizer=Adam(learning_rate), loss="mse")
 
+    plot_model(model, to_file='model_architecture.png', show_shapes=True, show_layer_names=True)
+
     return model
 
 
