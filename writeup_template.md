@@ -12,12 +12,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image2]: ./examples/placeholder_small.png "Normal Image"
+[image3]: ./examples/placeholder_small.png "Flipped Image"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -64,7 +60,7 @@ The final step was to run the simulator to see how well the car was driving arou
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes: Here is a visualization of the architecture
+The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes, which was implemented in Keras. Here is a visualization of the architecture
 
 ![alt text][image1]
 
@@ -77,10 +73,9 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 ![alt text][image6]
 ![alt text][image7]
 
-Also, the training data provided center, left and right images. To further augment the data
+Also, the training data provided center, left and right images. To further augment the data I used the left and right images in addition to the center images, as described in the lectures. The steering angle for the left and right image was inferred from the steering angle for the center image by adding/subtraction a small correction angle.
 
-After the collection process, I had  number of data points. I then preprocessed this data by cropping the images to the size
-
+I then preprocessed this data by cropping the images to the size 64x64. This preprocessing was done using the opencv library.
 
 I finally randomly shuffled the data set and put 30% of the data into a validation set. 
 
