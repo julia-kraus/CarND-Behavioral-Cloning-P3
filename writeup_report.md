@@ -64,3 +64,8 @@ I used this training data for training the model. The validation set helped dete
 
 #### 4. Attempts to Reduce Overfitting
 The model was trained and validated on different data sets to ensure that the model was not overfitting. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. Dropout layers for reduced overfitting were not necessary.
+
+#### 5. Possible Improvements
+First of all, one could gather more training data on both tracks, driving counter-clockwise as well as clockwise.
+Second, one could experiment more with data preprocessing. Are there any steps such as grayscaling and binary masking that improve the output?
+Third, one could experiment more with the architecture of the net, for example implement dropout layers or compare the strided convolutions with maxpooling layers. One could also implement early stopping in Keras, so that the epochs are automatically stopped when the performance does not get better.
