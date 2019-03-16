@@ -4,7 +4,7 @@ import os
 from PIL import Image
 np.random.seed(0)
 
-DATA_HOME = './data'
+DATA_HOME = './data_mine'
 DRIVING_LOG_FILE = os.path.join(DATA_HOME, 'driving_log.csv')
 STEERING_CORRECTION = 0.229
 
@@ -86,3 +86,6 @@ def crop(image, top_crop=60, bottom_crop=20):
     """
     return image[top_crop:-bottom_crop, :]
 
+
+imgs, angles = get_images_angles()
+process_image(imgs[0], angles[0])
