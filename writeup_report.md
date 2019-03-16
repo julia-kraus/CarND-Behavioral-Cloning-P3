@@ -57,10 +57,6 @@ Also, the training data provided center, left and right images. To further augme
 
 I then preprocessed this data by cropping the images so that the upper and the lower border of the image, which do not include road sections, where excluded. Then I reshaped the images to the size 64x64. This preprocessing was done using the opencv and PIL library (see utils.py, line 45ff).
 
-Original Image:
-
-![alt text][image2]
-
 Cropped Image:
 
 ![alt text][image3]
