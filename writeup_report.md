@@ -11,7 +11,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
+[image1]: ./examples/model_architecture.png "Model Visualization"
 [image2]: ./examples/placeholder_small.png "Normal Image"
 [image3]: ./examples/placeholder_small.png "Flipped Image"
 
@@ -49,16 +49,14 @@ The model includes RELU layers to introduce nonlinearity, and the data is normal
 
 #### 3. Creation of the Training Set & Training Process
 
-As I was very bad at steering the car in the simulator, I used the training data provided by Udacity in the work space.
+As I was very bad at steering the car in the simulator, I used the training data provided by Udacity in the work space. 
+The training data labels were parsed from driving_log.csv.
 
-To augment the data sat, I also flipped images and angles thinking that this would improve the training set, as the training track had mostly left turns. For example, here is an image that has then been flipped:
-
-![alt text][image2]
-![alt text][image2]
+To augment the data sat, I also flipped images and angles thinking that this would improve the training set, as the training track had mostly left turns.
 
 Also, the training data provided center, left and right images. To further augment the data I used the left and right images in addition to the center images, as described in the lectures. The steering angle for the left and right image was inferred from the steering angle for the center image by adding/subtraction a small correction angle.
 
-I then preprocessed this data by cropping the images to the size 64x64. This preprocessing was done using the opencv library.
+I then preprocessed this data by cropping the images so that the upper and the lower border of the image, which do not include road sections, where excluded. Then I reshaped the images to the size 64x64. This preprocessing was done using the opencv and PIL library (see utils.py, line 45ff).
 
 I finally randomly shuffled the data set and put 30% of the data into a validation set. 
 
@@ -66,3 +64,8 @@ I used this training data for training the model. The validation set helped dete
 
 #### 4. Attempts to Reduce Overfitting
 The model was trained and validated on different data sets to ensure that the model was not overfitting. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. Dropout layers for reduced overfitting were not necessary.
+
+#### 5. Possible Improvements
+First of all, one could gather more training data on both tracks, driving counter-clockwise as well as clockwise.
+Second, one could experiment more with data preprocessing. Are there any steps such as grayscaling and binary masking that improve the output?
+Third, one could experiment more with the architecture of the net, for example implement dropout layers or compare the strided convolutions with maxpooling layers. One could also implement early stopping in Keras, so that the epochs are automatically stopped when the performance does not get better.
