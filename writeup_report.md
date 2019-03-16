@@ -12,8 +12,9 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/model_architecture.png "Model Visualization"
-[image2]: ./examples/placeholder_small.png "Normal Image"
-[image3]: ./examples/placeholder_small.png "Flipped Image"
+[image2]: ./examples/normal_img.png "Normal Image"
+[image3]: ./examples/cropped_img.png "Cropped Image"
+[image3]: ./examples/reshaped_img.png "Reshaped Image"
 
 
 #### 1. An appropriate model architecture has been employed
@@ -52,11 +53,24 @@ The model includes RELU layers to introduce nonlinearity, and the data is normal
 As I was very bad at steering the car in the simulator, I used the training data provided by Udacity in the work space. 
 The training data labels were parsed from driving_log.csv.
 
-To augment the data sat, I also flipped images and angles thinking that this would improve the training set, as the training track had mostly left turns.
-
 Also, the training data provided center, left and right images. To further augment the data I used the left and right images in addition to the center images, as described in the lectures. The steering angle for the left and right image was inferred from the steering angle for the center image by adding/subtraction a small correction angle.
 
 I then preprocessed this data by cropping the images so that the upper and the lower border of the image, which do not include road sections, where excluded. Then I reshaped the images to the size 64x64. This preprocessing was done using the opencv and PIL library (see utils.py, line 45ff).
+
+Original Image:
+
+![alt text][image2]
+
+Cropped Image:
+
+![alt text][image3]
+
+Resized Image:
+
+![alt text][image4]
+
+
+To make the algorithm more stable, I then flipped images and angles with a probability of 0.5, thinking that this would improve the training set, as the training track had mostly left turns.
 
 I finally randomly shuffled the data set and put 30% of the data into a validation set. 
 
