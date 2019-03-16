@@ -14,7 +14,7 @@ The goals / steps of this project are the following:
 [image1]: ./examples/model_architecture.png "Model Visualization"
 [image2]: ./examples/normal_img.png "Normal Image"
 [image3]: ./examples/cropped_img.png "Cropped Image"
-[image3]: ./examples/reshaped_img.png "Reshaped Image"
+[image4]: ./examples/reshaped_img.png "Reshaped Image"
 
 
 #### 1. An appropriate model architecture has been employed
